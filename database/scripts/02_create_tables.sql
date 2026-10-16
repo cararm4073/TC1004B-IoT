@@ -52,3 +52,4 @@ CREATE TABLE Events_actuators (
 	FOREIGN KEY (device_id) REFERENCES Device(device_id),
 	FOREIGN KEY (user_id) REFERENCES Users(user_id)
 );
+
