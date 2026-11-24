@@ -65,6 +65,77 @@ The implementation of the NE555 is still pending, however this is a permanent pi
 
 ---
 
+## Backend & MQTT Setup
+
+### Linux
+
+#### 1. Python Virtual Environment
+> [!NOTE]
+> It is recommended to activate a virtual environment (e.g. `.fastAPI`) and use `python -m ...` so packages are installed and executed inside such environment, avoiding any modification on the system's Python.
+
+For a first time usage:
+1. Create and activate the virtual environment
+   ```bash
+   #create environment
+   python3 -m venv ~/.pyenv_base
+
+   #activate environment
+   source ~/.pyenv_base/bin/activate
+   ```
+
+2. Install the packages inside the virtual environment
+   ```bash
+   python -m pip install fastapi uvicorn --upgrade websockets
+   ```
+
+3. Run the Python file with FastAPI backend, **from the directory containing [main.py](src/backend/main.py)**:
+   
+   ```bash
+   #make sure you are inside the folder the main.py file is
+   python -m uvicorn main:app --reload
+   ```
+
+   The API is available under local host at http://127.0.0.1:8000
+
+#### 2. Mosquitto MQTT Broker
+Run Mosquitto directly using the project config (`src/backend/local.conf`, which enables `1883` for MQTT and `8080` for WebSockets):
+```bash
+# Stop the system service first so ports 1883/8080 are free
+sudo systemctl stop mosquitto
+
+# Start Mosquitto with verbose logs using the repo config
+mosquitto -c src/backend/local.conf -v
+```
+*(In MQTT Explorer, connect to `mqtt://localhost:1883`. In React, connect to `ws://127.0.0.1:8080` to avoid IPv6 `localhost` issues).*
+
+---
+
+## Frontend Dashboard (React + Vite)
+
+### 1. Create the Vite Project (one-time setup)
+Run from the `src/` directory:
+```bash
+cd src
+npm create vite@latest dashboard
+```
+Use the following options in the interactive prompt:
+- **Project name:** `dashboard`
+- **Package name:** `xhome-dashboard`
+- **Framework:** `React`
+- **Variant:** `TypeScript`
+- **Linter:** `oxlint` *(if not prompted, install with `npm install -D oxlint`)*
+
+### 2. Install Dependencies & Run the Dashboard
+```bash
+cd src/dashboard
+npm install
+npm install mqtt
+npm run dev
+```
+The dashboard will be available at `http://localhost:5173`.
+
+---
+
 ## Changelog
 
 ### [v0.2.0] - 2026-11-23

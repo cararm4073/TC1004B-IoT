@@ -12,6 +12,7 @@
   "dependencies": {
     "bootstrap": "^5.3.9",
     "chart.js": "^4.6.1",
+    "mqtt": "^5.16.1",
     "react": "^19.3.1",
     "react-dom": "^19.3.1"
   },
