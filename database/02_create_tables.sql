@@ -1,7 +1,4 @@
--- ============================================
--- xHome - 02_create_tables.sql
 -- Creates the tables (parents first, children after)
--- ============================================
 
 USE xhome;
 
@@ -53,3 +50,29 @@ CREATE TABLE Events_actuators (
 	FOREIGN KEY (user_id) REFERENCES Users(user_id)
 );
 
+-- v0.2.0
+-- Updates for current physical prototype
+-- RFID's uid added in Users, variable LEDs in rooms, dashboard state, and access logs
+
+ALTER TABLE Users
+	ADD COLUMN rfid_uid VARCHAR(32) UNIQUE NULL,
+	ADD COLUMN is_active BOOLEAN NOT NULL DEFAULT TRUE;
+
+ALTER TABLE Device
+	MODIFY COLUMN arduino_pin VARCHAR(30),
+	ADD COLUMN is_controllable BOOLEAN NOT NULL DEFAULT FALSE,
+	ADD COLUMN current_state VARCHAR(30) NULL;
+
+ALTER TABLE Events_actuators
+	ADD COLUMN source VARCHAR(20) NOT NULL DEFAULT 'auto'; -- dashboard, physical or auto
+
+CREATE TABLE IF NOT EXISTS Access_logs (
+	log_id INT AUTO_INCREMENT PRIMARY KEY,
+	device_id INT NOT NULL,
+	user_id INT NULL,                     -- NULL when the RFID card is unknown
+	rfid_uid VARCHAR(32) NOT NULL,
+	access_granted BOOLEAN NOT NULL,
+	timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+	FOREIGN KEY (device_id) REFERENCES Device(device_id),
+	FOREIGN KEY (user_id) REFERENCES Users(user_id)
+);
